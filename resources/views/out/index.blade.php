@@ -103,12 +103,6 @@
                     deferRender: true,
                     autoWidth: false,
                     responsive: true,
-                    scrollX: true,
-                    scrollY: "480px",
-                    scrollCollapse: true,
-                    fixedHeader: {
-                        header: true
-                    },
                     "language": {
                         "sProcessing": "Sedang memproses...",
                         "sLengthMenu": "Tampilkan _MENU_ entri",

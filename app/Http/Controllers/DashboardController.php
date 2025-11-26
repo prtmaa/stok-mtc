@@ -116,6 +116,7 @@ class DashboardController extends Controller
             'totalBarangIn' => $totalBarangIn,
             'totalBarangOut' => $totalBarangOut,
             'monthlyData' => $monthlyData,
+            'now' => $now,
         ]);
     }
 }

@@ -89,6 +89,34 @@
         .flatpickr-input {
             background-color: #ffffff !important;
         }
+
+        table.dataTable,
+        table.dataTable td {
+            font-family: 'Inter', sans-serif !important;
+            font-size: 13px !important;
+            font-weight: 300 !important;
+        }
+
+        .btn {
+            font-family: 'Inter', sans-serif !important;
+            font-size: 13px !important;
+            font-weight: 300 !important;
+        }
+
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .content-wrapper {
+            flex: 1 0 auto;
+            /* supaya footer tetap di bawah */
+        }
+
+        .main-footer {
+            flex-shrink: 0;
+        }
     </style>
 
 
@@ -115,7 +143,7 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h1 class="m-0">@yield('tittle')</h1>
+                            <h5 class="m-0">@yield('tittle')</h5>
                         </div><!-- /.col -->
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">

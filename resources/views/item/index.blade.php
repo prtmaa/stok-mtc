@@ -31,7 +31,7 @@
                                     @endif
 
                                     <a href="{{ route('item.exportExcel') }}" class="btn btn-success btn-sm">
-                                        <i class="fa fa-file-excel"></i> Export Excel
+                                        <i class="fa fa-file-excel"></i> Excel
                                     </a>
 
                                 </div>
@@ -86,14 +86,7 @@
                     processing: true,
                     serverSide: true,
                     deferRender: true,
-                    autoWidth: false,
                     responsive: true,
-                    scrollX: true,
-                    scrollY: "480px",
-                    scrollCollapse: true,
-                    fixedHeader: {
-                        header: true
-                    },
                     "language": {
                         "sProcessing": "Sedang memproses...",
                         "sLengthMenu": "Tampilkan _MENU_ entri",

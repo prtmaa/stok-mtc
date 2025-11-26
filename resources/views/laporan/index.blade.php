@@ -40,7 +40,7 @@
                             <div class="col-auto">
                                 <a href="{{ route('laporan.export', ['periode' => $periode, 'item_id' => $itemId]) }}"
                                     class="btn btn-success btn-sm">
-                                    <i class="fas fa-file-excel me-1"></i> Export Excel
+                                    <i class="fas fa-file-excel me-1"></i> Excel
                                 </a>
                             </div>
                         </div>

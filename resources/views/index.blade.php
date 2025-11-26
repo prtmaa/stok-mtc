@@ -7,7 +7,7 @@
 
         <!-- Ringkasan -->
         <div class="row">
-            <div class="col-12 col-sm-6 col-md-4 mb-3">
+            <div class="col-6 col-sm-6 col-md-6 mb-3">
 
                 <a href="{{ url('in') }}">
                     <div class="small-box bg-info">
@@ -22,7 +22,7 @@
                 </a>
             </div>
 
-            <div class="col-12 col-sm-6 col-md-4 mb-3">
+            <div class="col-6 col-sm-6 col-md-6 mb-3">
 
                 <a href="{{ url('out') }}">
                     <div class="small-box bg-danger">
@@ -37,13 +37,17 @@
                 </a>
             </div>
 
-            <div class="col-12 col-sm-6 col-md-4 mb-3">
+        </div>
 
+        <!-- Ringkasan Total Harga Bulanan -->
+        <div class="row">
+            <div class="col-6 col-sm-6 col-md-2 mb-3">
                 <a href="{{ url('item') }}">
-                    <div class="small-box bg-success">
+                    <div class="small-box bg-secondary">
                         <div class="inner">
-                            <h3>{{ $totalItems }}</h3>
-                            <p>Total Item Aktif</p>
+                            <h5>{{ $totalItems }}
+                            </h5>
+                            <p>Total Item</p>
                         </div>
                         <div class="icon">
                             <i class="fas fa-cubes"></i>
@@ -51,14 +55,80 @@
                     </div>
                 </a>
             </div>
+
+            <div class="col-6 col-sm-6 col-md-2 mb-3">
+                <div class="small-box bg-secondary">
+                    <div class="inner">
+                        <h5>Rp {{ number_format($chartData['datasets'][0]['data'][$now->month - 1] ?? 0, 0, ',', '.') }}
+                        </h5>
+                        <p>Starting Balance</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-6 col-sm-6 col-md-2 mb-3">
+                <div class="small-box bg-secondary">
+                    <div class="inner">
+                        <h5>Rp {{ number_format($chartData['datasets'][1]['data'][$now->month - 1] ?? 0, 0, ',', '.') }}
+                        </h5>
+                        <p>In Trading</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-arrow-down"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-6 col-sm-6 col-md-2 mb-3">
+                <div class="small-box bg-secondary">
+                    <div class="inner">
+                        <h5>Rp {{ number_format($chartData['datasets'][2]['data'][$now->month - 1] ?? 0, 0, ',', '.') }}
+                        </h5>
+                        <p>Total Inbound</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-truck-loading"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-6 col-sm-6 col-md-2 mb-3">
+                <div class="small-box bg-secondary">
+                    <div class="inner">
+                        <h5>Rp {{ number_format($chartData['datasets'][3]['data'][$now->month - 1] ?? 0, 0, ',', '.') }}
+                        </h5>
+                        <p>Out Used</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-arrow-up"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-6 col-sm-6 col-md-2 mb-3">
+                <div class="small-box bg-secondary">
+                    <div class="inner">
+                        <h5>Rp {{ number_format($chartData['datasets'][4]['data'][$now->month - 1] ?? 0, 0, ',', '.') }}
+                        </h5>
+                        <p>Ending Balance</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                </div>
+            </div>
         </div>
+
 
         <!-- Grafik Ringkasan Bulanan -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Grafik Ringkasan Stok per Bulan ({{ now()->year }})</h3>
+                <h3 class="card-title">Grafik Stokflow Perbulan ({{ now()->year }})</h3>
             </div>
-            <div class="card-body">
+            <div class="card-body" style="height:250px;">
                 <canvas id="stokSummaryChart" height="50"></canvas>
             </div>
         </div>
@@ -68,7 +138,7 @@
             <div class="card-header">
                 <h3 class="card-title">Grafik Barang Masuk dan Keluar ({{ now()->year }})</h3>
             </div>
-            <div class="card-body">
+            <div class="card-body" style="height:250px;">
                 <canvas id="stokChart" height="50"></canvas>
             </div>
         </div>
@@ -105,6 +175,7 @@
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                     y: {
                         beginAtZero: true
@@ -130,6 +201,7 @@
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 interaction: {
                     mode: 'index',
                     intersect: false
