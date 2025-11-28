@@ -35,9 +35,16 @@ class ItemController extends Controller
                 return $item->satuan->nama ?? '-';
             })
             ->addColumn('status', function ($item) {
-                return $item->stok_akhir < 1 ?
-                    '<span class="badge badge-danger">Order</span>' :
-                    '<span class="badge badge-success">Aman</span>';
+
+                if ($item->stok_akhir < $item->min) {
+                    return '<span class="badge bg-warning text-dark">Order</span>';
+                }
+
+                if ($item->stok_akhir == 0) {
+                    return '<span class="badge bg-danger">Habis</span>';
+                }
+
+                return '<span class="badge bg-success">Aman</span>';
             })
             ->addColumn('aksi', function ($item) {
                 if (in_array(auth()->user()->role, ['master', 'admin'])) {
@@ -75,6 +82,7 @@ class ItemController extends Controller
         $item->satuan_id = $request->satuan_id;
         $item->code = $kode;
         $item->stok_akhir = 0;
+        $item->min = $request->min;
 
         $item->save();
 
@@ -97,6 +105,7 @@ class ItemController extends Controller
         $item->nama = $request->nama;
         $item->kategori_id = $request->kategori_id;
         $item->satuan_id = $request->satuan_id;
+        $item->min = $request->min;
 
         $item->update();
 
@@ -153,23 +162,31 @@ class ItemController extends Controller
 
         foreach ($data as $index => $item) {
 
-            $status = $item->stok_akhir < 1 ? 'Order' : 'Aman';
+            if ($item->stok_akhir == 0) {
+                $status = 'Habis';
+            } elseif ($item->stok_akhir < $item->min) {
+                $status = 'Order';
+            } else {
+                $status = 'Aman';
+            }
 
             $sheet->setCellValue("A{$row}", $index + 1);
             $sheet->setCellValue("B{$row}", $item->nama);
             $sheet->setCellValue("C{$row}", $item->satuan->nama);
             $sheet->setCellValue("D{$row}", $item->stok_akhir);
-            $sheet->setCellValue("E{$row}", '1');
+            $sheet->setCellValue("E{$row}", $item->min);
             $sheet->setCellValue("F{$row}", $status);
 
-            $style = $sheet->getStyle('F' . $row);
+            $style = $sheet->getStyle("F{$row}");
+            $fill = $style->getFill();
+            $fill->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
 
-            if (strtoupper($status) == 'AMAN') {
-                $style->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('C6EFCE'); // hijau
-            } else if (strtoupper($status) == 'ORDER') {
-                $style->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()->setARGB('FFC7CE'); // merah
+            if ($status === 'Aman') {
+                $fill->getStartColor()->setARGB('C6EFCE');
+            } elseif ($status === 'Order') {
+                $fill->getStartColor()->setARGB('FFEB9C');
+            } elseif ($status === 'Habis') {
+                $fill->getStartColor()->setARGB('FFC7CE');
             }
 
 

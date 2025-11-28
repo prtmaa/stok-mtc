@@ -15,6 +15,7 @@ class Item extends Model
         'nama',
         'satuan',
         'stok_akhir',
+        'min',
     ];
 
     public function barangMasuk()

@@ -55,7 +55,8 @@
                                             <th>Item</th>
                                             <th>Kategori</th>
                                             <th>UoM</th>
-                                            <th>Jumlah</th>
+                                            <th>Stok</th>
+                                            <th>Min Stok</th>
                                             <th>Status</th>
                                             <th style="width: 150px;">Aksi</th>
                                         </thead>
@@ -123,6 +124,9 @@
                         },
                         {
                             data: 'stok_akhir'
+                        },
+                        {
+                            data: 'min'
                         },
                         {
                             data: 'status'
@@ -201,6 +205,7 @@
                         $('#modal-form [name=nama]').val(response.nama);
                         $('#modal-form [name=kategori_id]').val(response.kategori_id);
                         $('#modal-form [name=satuan_id]').val(response.satuan_id);
+                        $('#modal-form [name=min]').val(response.min);
                     })
                     .fail((errors) => {
                         Swal.fire({

@@ -77,17 +77,22 @@
 
                             <thead class="table-secondary">
                                 <tr>
-                                    <th rowspan="2" style="background-color:  #fdfdfd;">No</th>
-                                    <th rowspan="2" style="background-color:  #fdfdfd;">Item</th>
-                                    <th rowspan="2" style="background-color:  #fdfdfd;">Id</th>
-                                    <th rowspan="2" style="background-color:  #fdfdfd;">Kategori</th>
-                                    <th rowspan="2" style="background-color:  #fdfdfd;">UoM</th>
+                                    <th rowspan="2" style="background-color:  #fdfdfd;" class="group-header">No</th>
+                                    <th rowspan="2" style="background-color:  #fdfdfd;" class="group-header">Item</th>
+                                    <th rowspan="2" style="background-color:  #fdfdfd;" class="group-header">Id</th>
+                                    <th rowspan="2" style="background-color:  #fdfdfd;" class="group-header">Kategori
+                                    </th>
+                                    <th rowspan="2" style="background-color:  #fdfdfd;" class="group-header">UoM</th>
 
-                                    <th colspan="3" style="background-color: #fff3cd;">Starting Balance</th>
-                                    <th colspan="3" style="background-color: #cce5ff;">In Trading</th>
-                                    <th colspan="3" style="background-color: #cce5ff;">Total Inbound</th>
-                                    <th colspan="3" style="background-color: #f8d7da;">Out Used</th>
-                                    <th colspan="3" style="background-color: #d4edda;">Ending Balance</th>
+                                    <th colspan="3" style="background-color: #fff3cd;" class="group-header">Starting
+                                        Balance</th>
+                                    <th colspan="3" style="background-color: #cce5ff;" class="group-header">In Trading
+                                    </th>
+                                    <th colspan="3" style="background-color: #cce5ff;" class="group-header">Total Inbound
+                                    </th>
+                                    <th colspan="3" style="background-color: #f8d7da;" class="group-header">Out Used</th>
+                                    <th colspan="3" style="background-color: #d4edda;" class="group-header">Ending
+                                        Balance</th>
                                 </tr>
                                 <tr>
                                     {{-- Starting --}}
@@ -210,7 +215,16 @@
             $('#stockflowTable').DataTable({
                 paging: true,
                 searching: true,
-                ordering: false,
+                orderCellsTop: true,
+                columnDefs: [{
+                        targets: 'group-header',
+                        orderable: true
+                    },
+                    {
+                        targets: '_all',
+                        orderable: false
+                    }
+                ],
                 scrollX: true,
                 scrollY: "480px",
                 scrollCollapse: true,

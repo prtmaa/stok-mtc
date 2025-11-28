@@ -122,6 +122,47 @@
             </div>
         </div>
 
+        <div class="row">
+            <div class="col-6 col-sm-6 col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Pemakaian Item Perdivisi ({{ now()->year }})</h3>
+                    </div>
+                    <div class="card-body" style="height:300px">
+                        <canvas id="pieChart" height="50"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-6 col-sm-6 col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Item Fast Moving</h3>
+                    </div>
+
+                    <div class="card-body" style="height:300px">
+                        <table id="stokTable" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th style="text-align: center;">Item</th>
+                                    <th style="text-align: center;">Stok Akhir</th>
+                                    <th style="text-align: center;">Min Stok</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($order as $i => $item)
+                                    <tr class="">
+                                        <td>{{ $item->nama }}</td>
+                                        <td style="text-align: center;">{{ $item->stok_akhir }}</td>
+                                        <td style="text-align: center;">{{ $item->min }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Grafik Ringkasan Bulanan -->
         <div class="card">
@@ -230,6 +271,55 @@
                     }
                 }
             }
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const ctxDivisi = document.getElementById('pieChart').getContext('2d');
+
+            new Chart(ctxDivisi, {
+                type: 'pie',
+                data: {
+                    labels: {!! json_encode($labeldivisi) !!},
+                    datasets: [{
+                        data: {!! json_encode($totaldivisi) !!},
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(144, 238, 144, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                        ]
+                    }]
+
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+
+        });
+
+        $(function() {
+            $("#stokTable").DataTable({
+                responsive: true,
+                autoWidth: false,
+                scrollY: "200px",
+                searching: false,
+                info: false,
+                scrollCollapse: true,
+                paging: false,
+                responsive: true,
+
+            });
         });
     </script>
 @endsection

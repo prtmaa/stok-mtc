@@ -59,6 +59,16 @@
                             </div>
                         </div>
 
+                        <div class="form-group row">
+                            <label for="min" class="col-md-4 col-md-offset-1 control-label">Min Stok</label>
+                            <div class="col-md 6">
+                                <input type="number" name="min" id="min" class="form-control" value="0"
+                                    required autofocus oninvalid="this.setCustomValidity('Item harus diisi')"
+                                    oninput="this.setCustomValidity('')">
+                                <span class="help-block with-errors"></span>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal"><i

@@ -58,27 +58,27 @@ class DashboardController extends Controller
                 [
                     'label' => 'Starting Balance',
                     'data' => $startingData,
-                    'backgroundColor' => 'rgba(255, 206, 86, 0.7)', // kuning muda
+                    'backgroundColor' => 'rgba(255, 206, 86, 0.7)',
                 ],
                 [
                     'label' => 'Trading',
                     'data' => $tradingData,
-                    'backgroundColor' => 'rgba(54, 162, 235, 0.7)', // biru muda
+                    'backgroundColor' => 'rgba(54, 162, 235, 0.7)',
                 ],
                 [
                     'label' => 'Total Inbound',
                     'data' => $inboundData,
-                    'backgroundColor' => 'rgba(75, 192, 192, 0.7)', // biru muda
+                    'backgroundColor' => 'rgba(75, 192, 192, 0.7)',
                 ],
                 [
                     'label' => 'Used',
                     'data' => $usedData,
-                    'backgroundColor' => 'rgba(255, 99, 132, 0.7)', // merah muda
+                    'backgroundColor' => 'rgba(255, 99, 132, 0.7)',
                 ],
                 [
                     'label' => 'Ending Balance',
                     'data' => $endingData,
-                    'backgroundColor' => 'rgba(144, 238, 144, 0.7)', // hijau muda
+                    'backgroundColor' => 'rgba(144, 238, 144, 0.7)',
                 ],
             ]
         ];
@@ -92,7 +92,7 @@ class DashboardController extends Controller
             ->whereYear('tanggal', $now->year)
             ->sum('jumlah');
 
-        // Data grafik masuk vs keluar
+        // grafik masuk vs keluar
         $monthlyData = collect(range(1, 12))->map(function ($month) use ($now) {
             $barangIn = BarangIn::whereMonth('tanggal', $month)
                 ->whereYear('tanggal', $now->year)
@@ -109,6 +109,26 @@ class DashboardController extends Controller
             ];
         });
 
+        $year = date('Y');
+
+        $dataDivisi = DB::table('barang_out')
+            ->join('divisi', 'barang_out.divisi_id', '=', 'divisi.id')
+            ->select('divisi.nama as divisi', DB::raw('SUM(barang_out.jumlah) as total'))
+            ->whereYear('barang_out.tanggal', $year)
+            ->groupBy('divisi.nama')
+            ->orderBy('total', 'DESC')
+            ->get();
+
+
+        $labeldivisi = $dataDivisi->pluck('divisi');
+        $totaldivisi = $dataDivisi->pluck('total');
+
+        $order = DB::table('items')
+            ->whereColumn('stok_akhir', '<', 'min')
+            ->orderBy('stok_akhir', 'ASC')
+            ->get();
+
+
         return view('index', [
             'totalItems' => $totalItems,
             'chartData' => $chartData,
@@ -117,6 +137,9 @@ class DashboardController extends Controller
             'totalBarangOut' => $totalBarangOut,
             'monthlyData' => $monthlyData,
             'now' => $now,
+            'labeldivisi' => $labeldivisi,
+            'totaldivisi' => $totaldivisi,
+            'order' => $order,
         ]);
     }
 }
