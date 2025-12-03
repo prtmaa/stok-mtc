@@ -64,6 +64,7 @@
         .form-select,
         .btn,
         .nav-link,
+        .input-group-text,
         .dropdown-item {
             font-family: 'Inter', sans-serif !important;
             font-size: 13.5px !important;

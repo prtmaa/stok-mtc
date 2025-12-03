@@ -69,7 +69,9 @@ class BarangInController extends Controller
     {
         DB::beginTransaction();
         try {
-            $harga = preg_replace('/\D/', '', $request->harga);
+            $harga = str_replace(['.', ','], ['', '.'], $request->harga);
+            $harga = (float) $harga;
+
             $totalHarga = $request->jumlah * $harga;
 
             $latest = BarangIn::latest('id')->first();
@@ -122,7 +124,8 @@ class BarangInController extends Controller
     {
         DB::beginTransaction();
         try {
-            $harga = preg_replace('/\D/', '', $request->harga);
+            $harga = str_replace(['.', ','], ['', '.'], $request->harga);
+            $harga = (float) $harga;
             $barangIn = BarangIn::findOrFail($id);
             $item = Item::findOrFail($barangIn->item_id);
 

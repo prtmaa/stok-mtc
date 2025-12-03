@@ -58,25 +58,31 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="jumlah" class="col-md-4 control-label">Jumlah</label>
-                            <div class="col-md-5">
-                                <input type="number" min="1" name="jumlah" id="jumlah" class="form-control"
-                                    required oninvalid="this.setCustomValidity('Silahkan masukan jumlah')"
-                                    oninput="this.setCustomValidity('')">
-                            </div>
-                            <label id="satuan-text" class="col-md-3 control-label text-left"></label>
-                        </div>
+                            <label for="jumlah" class="col-md-4 col-md-offset-1 control-label">Jumlah</label>
 
+                            <div class="col-md-8">
+                                <div class="input-group">
+                                    <input type="number" min="1" name="jumlah" id="jumlah"
+                                        class="form-control" required
+                                        oninvalid="this.setCustomValidity('Silahkan masukan jumlah')"
+                                        oninput="this.setCustomValidity('')">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" id="satuan-text"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="form-group row">
                             <label for="harga" class="col-md-4 col-md-offset-1 control-label">Harga</label>
                             <div class="col-md-8">
                                 <input type="text" name="harga" id="harga" class="form-control harga" required
                                     autofocus oninvalid="this.setCustomValidity('Silahkan masukan harga')"
-                                    oninput="this.setCustomValidity('')">
+                                    oninput="this.setCustomValidity(''); formatRibuanKoma(this)">
                                 <span class="help-block with-errors"></span>
                             </div>
                         </div>
+
 
                         <div class="form-group row">
                             <label for="note" class="col-md-4 col-md-offset-1 control-label">Note</label>

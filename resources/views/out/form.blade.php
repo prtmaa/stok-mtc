@@ -48,13 +48,21 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="jumlah" class="col-md-4 control-label">Jumlah</label>
-                            <div class="col-md-5">
-                                <input type="number" min="1" name="jumlah" id="jumlah" class="form-control"
-                                    required>
+                            <label for="jumlah" class="col-md-4 col-md-offset-1 control-label">Jumlah</label>
+
+                            <div class="col-md-8">
+                                <div class="input-group">
+                                    <input type="number" min="1" name="jumlah" id="jumlah"
+                                        class="form-control" required
+                                        oninvalid="this.setCustomValidity('Silahkan masukan jumlah')"
+                                        oninput="this.setCustomValidity('')">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" id="satuan-text"></span>
+                                    </div>
+                                </div>
                             </div>
-                            <label id="satuan-text" class="col-md-3 control-label text-left"></label>
                         </div>
+
 
                         <div class="form-group row">
                             <label for="divisi_id" class="col-md-4 col-md-offset-1 control-label">Divisi</label>

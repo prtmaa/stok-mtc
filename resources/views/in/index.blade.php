@@ -235,7 +235,7 @@
                         $('#modal-form [name=item_id]').val(response.item_id).trigger('change');
                         $('#modal-form [name=supplier_id]').val(response.supplier_id).trigger('change');
                         $('#modal-form [name=jumlah]').val(response.jumlah);
-                        const formatted = formatRupiah(response.harga);
+                        const formatted = formatEdit(response.harga);
                         $('#modal-form [name=harga]').val(formatted);
                         $('#modal-form [name=note]').val(response.note);
                     })
@@ -293,45 +293,48 @@
                     instance.input.style.border = "1px solid #ced4da";
                 }
             });
+        </script>
 
+        <script>
+            function formatRibuanKoma(el) {
+                let value = el.value;
 
-            const bs = document.getElementById('harga');
+                // hanya izinkan angka dan koma
+                value = value.replace(/[^0-9,]/g, '');
 
-            bs.addEventListener('input', function(e) {
-                let value = this.value.replace(/\D/g, ''); // Hanya angka
-                if (value) {
-                    // Format angka dengan titik ribuan
-                    value = new Intl.NumberFormat('id-ID').format(value);
-                    this.value = value;
+                let parts = value.split(',');
+
+                // format bagian ribuan
+                let angka = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+                if (parts.length > 1) {
+                    el.value = angka + ',' + parts[1];
                 } else {
-                    this.value = '';
+                    el.value = angka;
                 }
-            });
-
-            // Format angka ke format Indonesia
-            function formatRupiah(angka) {
-                if (!angka) return '';
-                return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
             }
 
-            // Hapus semua karakter non-digit
-            function cleanNumber(str) {
-                return str.replace(/\D/g, '');
+            document.getElementById('harga').addEventListener('input', function() {
+                formatRibuanKoma(this);
+            });
+
+            function formatEdit(value) {
+                if (!value) return "";
+
+                // ubah ke string
+                value = value.toString();
+
+                // ubah titik desimal SQL → koma
+                value = value.replace('.', ',');
+
+                // pecah angka
+                let parts = value.split(',');
+
+                // tambahkan titik ribuan
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+                return parts.join(',');
             }
-
-            // Saat input harga diketik → langsung format ribuan
-            $(document).on('input', '#harga', function() {
-                let value = $(this).val();
-                let cleaned = cleanNumber(value);
-                let formatted = formatRupiah(cleaned);
-                $(this).val(formatted);
-            });
-
-            // Saat form disubmit → ubah ke angka murni sebelum dikirim
-            $('#modal-form form').on('submit', function() {
-                let hargaInput = $('#harga');
-                hargaInput.val(cleanNumber(hargaInput.val())); // kirim tanpa titik
-            });
 
             $('#modal-form').on('hidden.bs.modal', function() {
                 // Reset semua input biasa
@@ -342,6 +345,7 @@
                 $select.val(null).trigger('change'); // kosongkan pilihan
             });
         </script>
+
 
         <script>
             $(document).ready(function() {
