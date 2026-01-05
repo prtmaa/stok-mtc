@@ -1,16 +1,23 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
 
-    <!-- Brand Logo -->
-    <a href="{{ url('/') }}" class="brand-link">
-        <span class="brand-text font-weight-light">Stok MTC</span>
-    </a>
 
     <!-- Sidebar -->
     <div class="sidebar">
 
+        <div class="user-panel mt-3 pb-2 mb-3 d-flex align-items-center">
+            <div class="image">
+                {{-- <img src="{{ asset('favicon.png') }}" class="img-circle elevation-2"
+                    style="width:30px; height:30px; object-fit:cover;" alt="Logo"> --}}
+            </div>
+            <div class="info ml-2">
+                <a href="#" class="d-block font-weight-bold">Stok MTC</a>
+            </div>
+        </div>
+
         <!-- Sidebar Menu -->
         <nav class="mt-2">
-            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                data-accordion="false">
 
                 <!-- Dashboard -->
                 <li class="nav-item">
@@ -32,7 +39,7 @@
                 <li
                     class="nav-item has-treeview {{ request()->is('in*') || request()->is('out*') || request()->is('laporan*') ? 'menu-open' : '' }}">
                     <a href="#"
-                        class="nav-link {{ request()->is('in*') || request()->is('out*') ? 'active' : '' }}">
+                        class="nav-link {{ request()->is('in*') || request()->is('out*') || request()->is('laporan*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-clipboard-list"></i>
                         <p>Stok <i class="fas fa-angle-left right"></i></p>
                     </a>

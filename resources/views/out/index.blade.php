@@ -72,6 +72,8 @@
                                             <th>Item id</th>
                                             <th>Item</th>
                                             <th>Jumlah</th>
+                                            <th>Harga</th>
+                                            <th>Total Harga</th>
                                             <th style="width: 150px;">Aksi</th>
                                         </thead>
                                         <tbody>
@@ -143,6 +145,12 @@
                         {
                             data: 'jumlah'
                         },
+                        {
+                            data: 'harga'
+                        },
+                        {
+                            data: 'total_harga'
+                        },
 
                         {
                             data: 'aksi',
@@ -178,8 +186,10 @@
                             })
                             .fail((errors) => {
                                 Swal.fire({
-                                    icon: 'error',
-                                    title: 'Oops...',
+                                    icon: 'warning',
+                                    confirmButtonColor: '#3085d6',
+                                    iconColor: '#dc3545',
+                                    title: 'Gagal',
                                     text: 'Data gagal disimpan',
                                 })
                             });
@@ -283,39 +293,50 @@
                     backdrop: 'static',
                     keyboard: false
                 }).modal('show');
-                $('#modal-form .modal-title').text('Edit Data');
 
+                $('#modal-form .modal-title').text('Edit Data');
                 $('#modal-form form')[0].reset();
                 $('#modal-form form').attr('action', url);
                 $('#modal-form [name=_method]').val('put');
 
-                // sembunyikan select2, tampilkan input readonly
+                // 🔹 item tidak boleh diganti
                 $('#item_id').hide();
                 $('#item_id').next('.select2-container').hide();
                 $('#item_nama').show();
 
                 $.get(url)
                     .done(response => {
-                        // isi data form
+
+                        // data utama
                         $('#modal-form [name=tanggal]').val(response.tanggal);
                         $('#modal-form [name=divisi_id]').val(response.divisi_id);
                         $('#modal-form [name=jumlah]').val(response.jumlah);
                         $('#modal-form [name=note]').val(response.note);
 
-                        // isi item readonly
+                        // item info
                         $('#item_id').val(response.item_id);
                         $('#item_nama').val(response.item.code + ' - ' + response.item.nama);
                         $('#satuan-text').text(response.item?.satuan?.nama ?? '');
                         $('#stokakhir-input').val(response.item.stok_akhir ?? '');
+
+                        // 🔹 harga & total
+                        $('#harga')
+                            .val(formatRupiah(response.harga))
+                            .data('value', response.harga);
+
+                        $('#total_harga').val(formatRupiah(response.total_harga));
                     })
                     .fail(() => {
                         Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
+                            icon: 'warning',
+                            confirmButtonColor: '#3085d6',
+                            iconColor: '#dc3545',
+                            title: 'Gagal',
                             text: 'Data gagal ditampilkan',
                         });
                     });
             }
+
 
 
             function deleteData(url) {
@@ -323,6 +344,7 @@
                     title: 'Yakin?',
                     text: "Data akan dihapus",
                     icon: 'warning',
+                    confirmButtonColor: '#3085d6',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
@@ -344,8 +366,10 @@
                             })
                             .fail((errors) => {
                                 Swal.fire({
-                                    icon: 'error',
-                                    title: 'Oops...',
+                                    icon: 'warning',
+                                    confirmButtonColor: '#3085d6',
+                                    iconColor: '#dc3545',
+                                    title: 'Gagal',
                                     text: 'Data gagal dihapus',
                                 })
                             });
@@ -437,5 +461,66 @@
                 })],
 
             });
+
+            function showNote(note) {
+                if (!note || note.trim() === "") {
+                    note = "Tidak ada catatan.";
+                }
+
+                Swal.fire({
+                    title: 'Catatan',
+                    html: '<p style="text-align:left;">' + note + '</p>',
+                    icon: 'info',
+                    confirmButtonText: 'Tutup',
+                    confirmButtonColor: '#3085d6',
+                });
+            }
+        </script>
+        <script>
+            function formatRupiah(angka) {
+                return new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR'
+                }).format(angka);
+            }
+
+            $('#item_id').on('change', function() {
+                let itemId = $(this).val();
+                $('#harga').val('');
+                $('#total_harga').val('');
+
+                if (itemId) {
+                    $.get('/barang-out/harga/' + itemId, function(res) {
+                        $('#harga').val(formatRupiah(res.harga));
+                        $('#harga').data('value', res.harga); // simpan nilai asli
+                    });
+                }
+            });
+
+            $('#jumlah').on('input', function() {
+                let jumlah = parseFloat($(this).val());
+                let harga = parseFloat($('#harga').data('value')) || 0;
+
+                let total = jumlah * harga;
+                $('#total_harga').val(formatRupiah(total));
+            });
+
+            function formatEdit(value) {
+                if (!value) return "";
+
+                // ubah ke string
+                value = value.toString();
+
+                // ubah titik desimal SQL → koma
+                value = value.replace('.', ',');
+
+                // pecah angka
+                let parts = value.split(',');
+
+                // tambahkan titik ribuan
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+                return parts.join(',');
+            }
         </script>
     @endpush

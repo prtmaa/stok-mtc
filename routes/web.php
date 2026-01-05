@@ -52,7 +52,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('/out', BarangOutController::class);
     Route::get('/get-items', [BarangOutController::class, 'getItems'])->name('get.items');
     Route::get('/barang-out/export', [BarangOutController::class, 'exportExcel'])->name('out.export');
-
+    Route::get('/barang-out/harga/{item}', [BarangOutController::class, 'getHargaRataRata']);
 
     Route::get('/kategori/data', [KategoriController::class, 'data'])->name('kategori.data');
     Route::resource('/kategori', KategoriController::class);

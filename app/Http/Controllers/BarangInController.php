@@ -49,17 +49,18 @@ class BarangInController extends Controller
             })
             ->addIndexColumn()
             ->addColumn('aksi', function ($item) {
+                $noteButton = '<button type="button" onclick="showNote(`' . $item->note . '`)" class="btn btn-sm btn-warning btn-flat"><i class="fa fa-sticky-note"></i></button>';
 
                 if (in_array(auth()->user()->role, ['master', 'admin'])) {
                     return '
-                <div class="btn-group">
-                    <button type="button" onclick="editForm(`' . route('in.update', $item->id) . '`)" class="btn btn-sm btn-info btn-flat"><i class="fa fa-pen"></i></button>
-                    <button type="button" onclick="deleteData(`' . route('in.destroy', $item->id) . '`)" class="btn btn-sm btn-danger btn-flat"><i class="fa fa-trash"></i></button>
-                </div>
-                ';
+                        <div class="btn-group">
+                            ' . $noteButton . '
+                            <button type="button" onclick="editForm(`' . route('in.update', $item->id) . '`)" class="btn btn-sm btn-info btn-flat"><i class="fa fa-pen"></i></button>
+                            <button type="button" onclick="deleteData(`' . route('in.destroy', $item->id) . '`)" class="btn btn-sm btn-danger btn-flat"><i class="fa fa-trash"></i></button>
+                        </div>';
                 }
 
-                return '-';
+                return $noteButton;
             })
             ->rawColumns(['aksi', 'tanggal'])
             ->make(true);
@@ -112,7 +113,7 @@ class BarangInController extends Controller
 
     public function show($id)
     {
-        $in = BarangIn::select('id', 'tanggal', 'item_id', 'supplier_id', 'jumlah', 'harga', 'note')
+        $in = BarangIn::select('id', 'tanggal', 'item_id', 'supplier_id', 'jumlah', 'harga', 'note', 'total_harga')
             ->findOrFail($id);
 
         return response()->json($in);

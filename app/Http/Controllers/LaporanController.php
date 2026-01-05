@@ -232,11 +232,11 @@ class LaporanController extends Controller
         ];
 
         $total_hrg = [
-            'starting' => $combined->sum('starting_harga'),
-            'trading' => $combined->sum('trading_harga'),
-            'inbound' => $combined->sum('inbound_harga'),
-            'used' => $combined->sum('used_harga'),
-            'ending' => $combined->sum('ending_harga'),
+            'starting' => $combined->sum('starting_total') > 0 && $combined->sum('starting_jumlah') > 0 ? $combined->sum('starting_total') / $combined->sum('starting_jumlah') : 0,
+            'trading' => $combined->sum('trading_total') > 0 && $combined->sum('trading_jumlah') > 0 ? $combined->sum('trading_total') / $combined->sum('trading_jumlah') : 0,
+            'inbound' => $combined->sum('inbound_total') > 0 && $combined->sum('inbound_jumlah') > 0 ? $combined->sum('inbound_total') / $combined->sum('inbound_jumlah') : 0,
+            'used' => $combined->sum('used_total') > 0 && $combined->sum('used_jumlah') > 0 ? $combined->sum('used_total') / $combined->sum('used_jumlah') : 0,
+            'ending' => $combined->sum('ending_total') > 0 && $combined->sum('ending_jumlah') > 0 ? $combined->sum('ending_total') / $combined->sum('ending_jumlah') : 0,
         ];
 
         $items = Item::orderBy('nama')->get();

@@ -83,6 +83,14 @@
                             </div>
                         </div>
 
+                        <div class="form-group row">
+                            <label for="total_harga" class="col-md-4 control-label">Total Harga</label>
+                            <div class="col-md-8">
+                                <input type="text" name="total_harga" id="total_harga" class="form-control" readonly>
+                            </div>
+                        </div>
+
+
 
                         <div class="form-group row">
                             <label for="note" class="col-md-4 col-md-offset-1 control-label">Note</label>
@@ -109,3 +117,19 @@
 
         </div>
     </div>
+
+    <script>
+        document.getElementById('jumlah').addEventListener('input', updateTotal);
+        document.getElementById('harga').addEventListener('input', updateTotal);
+
+        function updateTotal() {
+            let jumlah = parseFloat(document.getElementById('jumlah').value) || 0;
+            let harga = document.getElementById('harga').value.replace(/\./g, '').replace(/,/g, '.') || 0;
+            harga = parseFloat(harga);
+
+            let total = jumlah * harga;
+
+            document.getElementById('total_harga').value =
+                total.toLocaleString('id-ID');
+        }
+    </script>

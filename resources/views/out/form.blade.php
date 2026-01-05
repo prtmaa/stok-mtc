@@ -63,6 +63,21 @@
                             </div>
                         </div>
 
+                        <div class="form-group row">
+                            <label for="harga" class="col-md-4 col-md-offset-1 control-label">Harga</label>
+                            <div class="col-md-8">
+                                <input type="text" id="harga" class="form-control" readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="total_harga" class="col-md-4 col-md-offset-1 control-label">Total Harga</label>
+                            <div class="col-md-8">
+                                <input type="text" id="total_harga" class="form-control" readonly>
+                            </div>
+                        </div>
+
+
 
                         <div class="form-group row">
                             <label for="divisi_id" class="col-md-4 col-md-offset-1 control-label">Divisi</label>

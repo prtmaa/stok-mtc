@@ -118,6 +118,67 @@
         .main-footer {
             flex-shrink: 0;
         }
+
+        /* ============================= */
+        /* GLOBAL SWEETALERT2 OVERRIDE   */
+        /* ============================= */
+
+        /* Popup keseluruhan lebih kecil */
+        .swal2-popup {
+            font-size: 13px !important;
+            padding: 10px !important;
+            width: 300px !important;
+            /* default=500px */
+        }
+
+        /* Title lebih kecil */
+        .swal2-title {
+            font-size: 16px !important;
+        }
+
+        /* Isi text */
+        .swal2-html-container {
+            font-size: 14px !important;
+            padding: 5px 0 !important;
+            text-align: center !important;
+        }
+
+        /* Tombol Confirm */
+        .swal2-confirm {
+            font-size: 12px !important;
+            padding: 4px 12px !important;
+            height: auto !important;
+        }
+
+        /* Tombol Cancel */
+        .swal2-cancel {
+            font-size: 12px !important;
+            padding: 4px 12px !important;
+            height: auto !important;
+        }
+
+        /* Pastikan container popup tetap menggunakan align bawaan */
+        .small-swal {
+            width: 300px !important;
+            padding: 10px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+        }
+
+        /* Icon info/sukses/dll dikecilkan */
+        .swal2-icon {
+            margin: 0 auto !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+        }
+
+        /* Input SweetAlert (jika ada form) */
+        .swal2-input {
+            font-size: 12px !important;
+            padding: 4px 8px !important;
+        }
     </style>
 
 

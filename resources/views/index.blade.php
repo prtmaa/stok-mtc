@@ -1,6 +1,7 @@
 @extends('layouts.master')
 
-<title>Dashboard</title>
+<title>
+    Dashboard</title>
 
 @section('content')
     <div class="container-fluid">
@@ -16,7 +17,7 @@
                             <p>Barang Masuk Bulan Ini</p>
                         </div>
                         <div class="icon">
-                            <i class="fas fa-arrow-down"></i>
+                            <i class="fas fa-sign-in-alt"></i>
                         </div>
                     </div>
                 </a>
@@ -31,7 +32,7 @@
                             <p>Barang Keluar Bulan Ini</p>
                         </div>
                         <div class="icon">
-                            <i class="fas fa-arrow-up"></i>
+                            <i class="fas fa-sign-out-alt"></i>
                         </div>
                     </div>
                 </a>
@@ -45,8 +46,8 @@
                 <a href="{{ url('item') }}">
                     <div class="small-box bg-secondary">
                         <div class="inner">
-                            <h5>{{ $totalItems }}
-                            </h5>
+                            <h6>{{ $totalItems }}
+                            </h6>
                             <p>Total Item</p>
                         </div>
                         <div class="icon">
@@ -59,12 +60,12 @@
             <div class="col-6 col-sm-6 col-md-2 mb-3">
                 <div class="small-box bg-secondary">
                     <div class="inner">
-                        <h5>Rp {{ number_format($chartData['datasets'][0]['data'][$now->month - 1] ?? 0, 0, ',', '.') }}
-                        </h5>
+                        <h6>Rp {{ number_format($chartData['datasets'][0]['data'][$now->month - 1] ?? 0, 0, ',', '.') }}
+                        </h6>
                         <p>Starting Balance</p>
                     </div>
                     <div class="icon">
-                        <i class="fas fa-coins"></i>
+                        <i class="fas fa-receipt"></i>
                     </div>
                 </div>
             </div>
@@ -72,8 +73,8 @@
             <div class="col-6 col-sm-6 col-md-2 mb-3">
                 <div class="small-box bg-secondary">
                     <div class="inner">
-                        <h5>Rp {{ number_format($chartData['datasets'][1]['data'][$now->month - 1] ?? 0, 0, ',', '.') }}
-                        </h5>
+                        <h6>Rp {{ number_format($chartData['datasets'][1]['data'][$now->month - 1] ?? 0, 0, ',', '.') }}
+                        </h6>
                         <p>In Trading</p>
                     </div>
                     <div class="icon">
@@ -85,12 +86,12 @@
             <div class="col-6 col-sm-6 col-md-2 mb-3">
                 <div class="small-box bg-secondary">
                     <div class="inner">
-                        <h5>Rp {{ number_format($chartData['datasets'][2]['data'][$now->month - 1] ?? 0, 0, ',', '.') }}
-                        </h5>
+                        <h6>Rp {{ number_format($chartData['datasets'][2]['data'][$now->month - 1] ?? 0, 0, ',', '.') }}
+                        </h6>
                         <p>Total Inbound</p>
                     </div>
                     <div class="icon">
-                        <i class="fas fa-truck-loading"></i>
+                        <i class="fas fa-coins"></i>
                     </div>
                 </div>
             </div>
@@ -98,8 +99,8 @@
             <div class="col-6 col-sm-6 col-md-2 mb-3">
                 <div class="small-box bg-secondary">
                     <div class="inner">
-                        <h5>Rp {{ number_format($chartData['datasets'][3]['data'][$now->month - 1] ?? 0, 0, ',', '.') }}
-                        </h5>
+                        <h6>Rp {{ number_format($chartData['datasets'][3]['data'][$now->month - 1] ?? 0, 0, ',', '.') }}
+                        </h6>
                         <p>Out Used</p>
                     </div>
                     <div class="icon">
@@ -111,8 +112,8 @@
             <div class="col-6 col-sm-6 col-md-2 mb-3">
                 <div class="small-box bg-secondary">
                     <div class="inner">
-                        <h5>Rp {{ number_format($chartData['datasets'][4]['data'][$now->month - 1] ?? 0, 0, ',', '.') }}
-                        </h5>
+                        <h6>Rp {{ number_format($chartData['datasets'][4]['data'][$now->month - 1] ?? 0, 0, ',', '.') }}
+                        </h6>
                         <p>Ending Balance</p>
                     </div>
                     <div class="icon">
@@ -140,13 +141,14 @@
                         <h3 class="card-title">Item Fast Moving</h3>
                     </div>
 
-                    <div class="card-body" style="height:300px">
+                    <div class="card-body pt-0" style="height:300px">
                         <table id="stokTable" class="table table-bordered">
                             <thead>
                                 <tr>
                                     <th style="text-align: center;">Item</th>
                                     <th style="text-align: center;">Stok Akhir</th>
                                     <th style="text-align: center;">Min Stok</th>
+                                    <th style="text-align: center;">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -155,6 +157,15 @@
                                         <td>{{ $item->nama }}</td>
                                         <td style="text-align: center;">{{ $item->stok_akhir }}</td>
                                         <td style="text-align: center;">{{ $item->min }}</td>
+                                        <td style="text-align: center;">
+                                            @if ($item->stok_akhir == 0)
+                                                <span class="badge bg-danger">Habis</span>
+                                            @elseif ($item->stok_akhir < $item->min)
+                                                <span class="badge bg-warning text-dark">Order</span>
+                                            @else
+                                                <span class="badge bg-success">Aman</span>
+                                            @endif
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -312,13 +323,19 @@
             $("#stokTable").DataTable({
                 responsive: true,
                 autoWidth: false,
-                scrollY: "200px",
-                searching: false,
-                info: false,
+                scrollY: "150px",
                 scrollCollapse: true,
                 paging: false,
                 responsive: true,
-
+                "language": {
+                    "sProcessing": "Sedang memproses...",
+                    "sLengthMenu": "Tampilkan _MENU_ entri",
+                    "sZeroRecords": "Tidak ditemukan data yang sesuai",
+                    "sInfo": "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+                    "sInfoFiltered": "(disaring dari _MAX_ entri keseluruhan)",
+                    "sInfoEmpty": "Menampilkan 0 sampai 0 dari 0 entri",
+                    "sSearch": "Pencarian:",
+                },
             });
         });
     </script>

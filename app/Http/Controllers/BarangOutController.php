@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BarangIn;
 use App\Models\BarangOut;
 use App\Models\Divisi;
 use App\Models\Item;
@@ -46,22 +47,51 @@ class BarangOutController extends Controller
             ->addColumn('divisi_id', function ($item) {
                 return $item->divisi->nama ?? '-';
             })
+            ->addColumn('harga', function ($item) {
+                return formatRupiah($item->harga);
+            })
+            ->addColumn('total_harga', function ($item) {
+                return formatRupiah($item->total_harga);
+            })
             ->addIndexColumn()
             ->addColumn('aksi', function ($item) {
+                $noteButton = '<button type="button" onclick="showNote(`' . $item->note . '`)" class="btn btn-sm btn-warning btn-flat"><i class="fa fa-sticky-note"></i></button>';
+
                 if (in_array(auth()->user()->role, ['master', 'admin'])) {
                     return '
-                <div class="btn-group">
-                    <button type="button" onclick="editForm(`' . route('out.update', $item->id) . '`)" class="btn btn-sm btn-info btn-flat"><i class="fa fa-pen"></i></button>
-                    <button type="button" onclick="deleteData(`' . route('out.destroy', $item->id) . '`)" class="btn btn-sm btn-danger btn-flat"><i class="fa fa-trash"></i></button>
-                </div>
-                ';
+                        <div class="btn-group">
+                            ' . $noteButton . '
+                            <button type="button" onclick="editForm(`' . route('out.update', $item->id) . '`)" class="btn btn-sm btn-info btn-flat"><i class="fa fa-pen"></i></button>
+                            <button type="button" onclick="deleteData(`' . route('out.destroy', $item->id) . '`)" class="btn btn-sm btn-danger btn-flat"><i class="fa fa-trash"></i></button>
+                        </div>';
                 }
 
-                return '-';
+                return $noteButton;
             })
             ->rawColumns(['aksi', 'tanggal'])
             ->make(true);
     }
+
+    public function getHargaRataRata($item_id)
+    {
+        $data = BarangIn::where('item_id', $item_id)
+            ->selectRaw('
+            SUM(jumlah) as total_jumlah,
+            SUM(total_harga) as total_nilai
+        ')
+            ->first();
+
+        if (!$data || $data->total_jumlah == 0) {
+            return response()->json([
+                'harga' => 0
+            ]);
+        }
+
+        return response()->json([
+            'harga' => round($data->total_nilai / $data->total_jumlah, 2)
+        ]);
+    }
+
 
     public function store(Request $request)
     {
@@ -73,23 +103,46 @@ class BarangOutController extends Controller
             if ($item->stok_akhir < $request->jumlah) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Stok tidak mencukupi untuk melakukan pengeluaran ini!'
+                    'message' => 'Stok tidak mencukupi!'
                 ], 422);
             }
 
+            // 🔹 Hitung harga rata-rata barang masuk
+            $barangIn = BarangIn::where('item_id', $request->item_id)
+                ->selectRaw('
+                SUM(jumlah) as total_jumlah,
+                SUM(total_harga) as total_nilai
+            ')
+                ->first();
+
+            if (!$barangIn || $barangIn->total_jumlah == 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Harga barang belum tersedia'
+                ], 422);
+            }
+
+            $harga = $barangIn->total_nilai / $barangIn->total_jumlah;
+            $totalHarga = $harga * $request->jumlah;
+
+            // 🔹 Generate kode
             $latest = BarangOut::latest('id')->first();
             $number = $latest ? ((int) substr($latest->code, -4)) + 1 : 1;
             $kode = 'OUT-' . str_pad($number, 4, '0', STR_PAD_LEFT);
 
+            // 🔹 Simpan barang keluar
             $barangOut = BarangOut::create([
                 'tanggal' => $request->tanggal,
                 'code' => $kode,
                 'item_id' => $request->item_id,
                 'divisi_id' => $request->divisi_id,
                 'jumlah' => $request->jumlah,
+                'harga' => round($harga, 2),
+                'total_harga' => round($totalHarga, 2),
                 'note' => $request->note,
             ]);
 
+            // 🔹 Update stok
             $item->stok_akhir -= $request->jumlah;
             $item->save();
 
@@ -97,17 +150,18 @@ class BarangOutController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data barang masuk berhasil disimpan dan stok diperbarui',
+                'message' => 'Barang keluar berhasil disimpan (harga rata-rata)',
                 'data' => $barangOut
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+                'message' => $e->getMessage()
             ], 500);
         }
     }
+
 
     public function show($id)
     {
@@ -122,13 +176,12 @@ class BarangOutController extends Controller
             $barangOut = BarangOut::findOrFail($id);
             $item = Item::findOrFail($barangOut->item_id);
 
-            // Hitung selisih jumlah lama dan baru
+            // 🔹 selisih jumlah (baru - lama)
             $selisih = $request->jumlah - $barangOut->jumlah;
 
-            // Hitung stok akhir baru (simulasi)
+            // 🔹 simulasi stok akhir
             $stokBaru = $item->stok_akhir - $selisih;
 
-            // Cek apakah stok akan menjadi minus
             if ($stokBaru < 0) {
                 return response()->json([
                     'success' => false,
@@ -136,22 +189,27 @@ class BarangOutController extends Controller
                 ], 422);
             }
 
-            // Simpan perubahan stok
+            // 🔹 update stok
             $item->stok_akhir = $stokBaru;
             $item->save();
 
+            // 🔹 hitung ulang total harga (harga lama)
+            $totalHarga = $barangOut->harga * $request->jumlah;
+
+            // 🔹 update barang out
             $barangOut->update([
-                'tanggal' => $request->tanggal,
-                'divisi_id' => $request->divisi_id,
-                'jumlah' => $request->jumlah,
-                'note' => $request->note,
+                'tanggal'     => $request->tanggal,
+                'divisi_id'   => $request->divisi_id,
+                'jumlah'      => $request->jumlah,
+                'total_harga' => $totalHarga,
+                'note'        => $request->note,
             ]);
 
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data barang masuk berhasil diperbarui dan stok disesuaikan'
+                'message' => 'Data barang keluar berhasil diperbarui dan stok disesuaikan'
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -161,6 +219,7 @@ class BarangOutController extends Controller
             ], 500);
         }
     }
+
 
     public function destroy($id)
     {
@@ -258,7 +317,9 @@ class BarangOutController extends Controller
             $sheet->setCellValue("F{$row}", $item->item->nama);
             $sheet->setCellValue("G{$row}", $item->item->satuan->nama);
             $sheet->setCellValue("H{$row}", $item->jumlah);
-            $sheet->setCellValue("I{$row}", $item->note);
+            $sheet->setCellValue("I{$row}", $item->harga);
+            $sheet->setCellValue("J{$row}", $item->total_harga);
+            $sheet->setCellValue("K{$row}", $item->note);
 
             $row++;
         }

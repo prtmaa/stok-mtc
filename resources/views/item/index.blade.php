@@ -166,8 +166,10 @@
                             })
                             .fail((errors) => {
                                 Swal.fire({
-                                    icon: 'error',
-                                    title: 'Oops...',
+                                    icon: 'warning',
+                                    confirmButtonColor: '#3085d6',
+                                    iconColor: '#dc3545',
+                                    title: 'Gagal',
                                     text: 'Data gagal disimpan',
                                 })
                             });
@@ -209,8 +211,10 @@
                     })
                     .fail((errors) => {
                         Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
+                            icon: 'warning',
+                            confirmButtonColor: '#3085d6',
+                            iconColor: '#dc3545',
+                            title: 'Gagal',
                             text: 'Data gagal ditampilkan',
                         })
                     });
@@ -242,8 +246,10 @@
                             })
                             .fail((errors) => {
                                 Swal.fire({
-                                    icon: 'error',
-                                    title: 'Oops...',
+                                    icon: 'warning',
+                                    confirmButtonColor: '#3085d6',
+                                    iconColor: '#dc3545',
+                                    title: 'Gagal',
                                     text: 'Data gagal dihapus',
                                 })
                             });

@@ -186,8 +186,10 @@
                             })
                             .fail((errors) => {
                                 Swal.fire({
-                                    icon: 'error',
-                                    title: 'Oops...',
+                                    icon: 'warning',
+                                    confirmButtonColor: '#3085d6',
+                                    iconColor: '#dc3545',
+                                    title: 'Gagal',
                                     text: 'Data gagal disimpan',
                                 })
                             });
@@ -235,15 +237,19 @@
                         $('#modal-form [name=item_id]').val(response.item_id).trigger('change');
                         $('#modal-form [name=supplier_id]').val(response.supplier_id).trigger('change');
                         $('#modal-form [name=jumlah]').val(response.jumlah);
-                        const formatted = formatEdit(response.harga);
-                        $('#modal-form [name=harga]').val(formatted);
+                        const formattedharga = formatEdit(response.harga);
+                        const formattedtotal = formatEdit(response.total_harga);
+                        $('#modal-form [name=harga]').val(formattedharga);
+                        $('#modal-form [name=total_harga]').val(formattedtotal);
                         $('#modal-form [name=note]').val(response.note);
                     })
                     .fail((errors) => {
                         Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Data gagal ditampilkan',
+                            icon: 'warning',
+                            confirmButtonColor: '#3085d6',
+                            iconColor: '#dc3545',
+                            title: 'Gagal',
+                            text: 'Data gagal disimpan',
                         })
                     });
             }
@@ -274,8 +280,10 @@
                             })
                             .fail((errors) => {
                                 Swal.fire({
-                                    icon: 'error',
-                                    title: 'Oops...',
+                                    icon: 'warning',
+                                    confirmButtonColor: '#3085d6',
+                                    iconColor: '#dc3545',
+                                    title: 'Gagal',
                                     text: 'Data gagal dihapus',
                                 })
                             });
@@ -406,5 +414,19 @@
                 })],
 
             });
+
+            function showNote(note) {
+                if (!note || note.trim() === "") {
+                    note = "Tidak ada catatan.";
+                }
+
+                Swal.fire({
+                    title: 'Catatan',
+                    html: '<p style="text-align:left;">' + note + '</p>',
+                    icon: 'info',
+                    confirmButtonText: 'Tutup',
+                    confirmButtonColor: '#3085d6',
+                });
+            }
         </script>
     @endpush

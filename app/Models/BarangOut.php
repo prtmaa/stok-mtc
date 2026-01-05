@@ -17,6 +17,8 @@ class BarangOut extends Model
         'item_id',
         'divisi_id',
         'jumlah',
+        'harga',
+        'total_harga',
         'note',
     ];
 
