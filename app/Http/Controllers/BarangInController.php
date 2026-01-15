@@ -24,7 +24,7 @@ class BarangInController extends Controller
 
     public function data()
     {
-        $item = BarangIn::with('item', 'supplier')->orderBy('created_at', 'desc')
+        $item = BarangIn::with('item.satuan', 'supplier')->orderBy('created_at', 'desc')
             ->get();
 
         return datatables()
@@ -46,6 +46,9 @@ class BarangInController extends Controller
             })
             ->addColumn('supplier_id', function ($item) {
                 return $item->supplier->nama ?? '-';
+            })
+            ->addColumn('jumlah', function ($item) {
+                return $item->jumlah . ' ' . ($item->item->satuan->nama ?? '-');
             })
             ->addIndexColumn()
             ->addColumn('aksi', function ($item) {

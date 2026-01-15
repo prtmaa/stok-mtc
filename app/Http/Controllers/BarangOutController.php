@@ -30,7 +30,7 @@ class BarangOutController extends Controller
 
     public function data()
     {
-        $item = BarangOut::with('item', 'divisi')->orderBy('created_at', 'desc')
+        $item = BarangOut::with('item.satuan', 'divisi')->orderBy('created_at', 'desc')
             ->get();
 
         return datatables()
@@ -52,6 +52,9 @@ class BarangOutController extends Controller
             })
             ->addColumn('total_harga', function ($item) {
                 return formatRupiah($item->total_harga);
+            })
+            ->addColumn('jumlah', function ($item) {
+                return $item->jumlah . ' ' . ($item->item->satuan->nama ?? '-');
             })
             ->addIndexColumn()
             ->addColumn('aksi', function ($item) {
